@@ -1,9 +1,10 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 import relationship_app.views as views
+from .views import list_books
 
 urlspattern = [
-    path("list/", views.query_books_by_author),
+    path("list/", views.list_books),
     path('library/', views.LibraryDetailView.as_view()),
     path('register/', views.register.as_view(template_name='relationship_app/register.html'), name='register'),
     path('login/', views.LoginView.as_view(template_name='relationship_app/login.html'), name='login'),

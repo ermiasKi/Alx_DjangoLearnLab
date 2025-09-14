@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from .forms import BookForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 # Create your views here.
 
 @permission_required('relationship_app.can_add_book', raise_exception=True)
@@ -59,7 +60,7 @@ def delete_book(request, book_id):
 
 
 
-def query_books_by_author(request):
+def list_books(request):
     """
     Query all books by a specific author.
     """
@@ -131,7 +132,7 @@ def is_member(user):
     return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
 # Role-based views
-class AdminView(View):
+class AdminView(LoginRequiredMixin, UserPassesTestMixin, View):
     @method_decorator(login_required)
     @method_decorator(user_passes_test(is_admin))
     def dispatch(self, *args, **kwargs):
