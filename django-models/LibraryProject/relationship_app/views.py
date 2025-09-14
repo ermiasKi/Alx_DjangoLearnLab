@@ -132,7 +132,7 @@ def is_member(user):
     return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
 # Role-based views
-class AdminView(LoginRequiredMixin, UserPassesTestMixin, View):
+class Admin(LoginRequiredMixin, UserPassesTestMixin, View):
     @method_decorator(login_required)
     @method_decorator(user_passes_test(is_admin))
     def dispatch(self, *args, **kwargs):
@@ -141,7 +141,7 @@ class AdminView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request):
         return render(request, 'relationship_app/admin_view.html')
 
-class LibrarianView(View):
+class Librarian(View):
     @method_decorator(login_required)
     @method_decorator(user_passes_test(is_librarian))
     def dispatch(self, *args, **kwargs):
@@ -150,7 +150,7 @@ class LibrarianView(View):
     def get(self, request):
         return render(request, 'relationship_app/librarian_view.html')
 
-class MemberView(View):
+class Member(View):
     @method_decorator(login_required)
     @method_decorator(user_passes_test(is_member))
     def dispatch(self, *args, **kwargs):
