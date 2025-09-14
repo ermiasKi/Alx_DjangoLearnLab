@@ -12,7 +12,7 @@ from django.contrib.auth import login, logout, authenticate
 from .forms import BookForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 # Create your views here.
-
+@user_passes_test
 @permission_required('relationship_app.can_add_book', raise_exception=True)
 def add_book(request):
     """
