@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView
 from .models import Book, Library
 from django.views import View
+from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.decorators import permission_required
@@ -62,7 +63,7 @@ def query_books_by_author(request):
     Query all books by a specific author.
     """
     books = Book.objects.all()
-    return render(request, 'list_books.html', {"books":books})
+    return render(request, 'relationship_app/list_books.html', {"books":books})
 
 class LibraryDetailView(DetailView):
     """
@@ -129,17 +130,29 @@ def is_member(user):
     return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
 # Role-based views
-@login_required
-@user_passes_test(is_admin)
-def Admin(request):
-    return render(request, 'relationship_app/admin_view.html')
+class AdminView(View):
+    @method_decorator(login_required)
+    @method_decorator(user_passes_test(is_admin))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    def get(self, request):
+        return render(request, 'relationship_app/admin_view.html')
 
-@login_required
-@user_passes_test(is_librarian)
-def Librarian(request):
-    return render(request, 'relationship_app/librarian_view.html')
+class LibrarianView(View):
+    @method_decorator(login_required)
+    @method_decorator(user_passes_test(is_librarian))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    def get(self, request):
+        return render(request, 'relationship_app/librarian_view.html')
 
-@login_required
-@user_passes_test(is_member)
-def Member(request):
-    return render(request, 'relationship_app/member_view.html')
+class MemberView(View):
+    @method_decorator(login_required)
+    @method_decorator(user_passes_test(is_member))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    def get(self, request):
+        return render(request, 'relationship_app/member_view.html')
