@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView
-from .models import Book, Library
+from .models import Book
+from .models import Library
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
@@ -83,7 +84,7 @@ class LibraryDetailView(DetailView):
         context['books'] = library.books.all().select_related('author')
         return context
     
-class RegisterView(View):
+class register(View):
     def get(self, request):
         form = UserCreationForm()
         return render(request, 'relationship_app/register.html', {'form': form})
