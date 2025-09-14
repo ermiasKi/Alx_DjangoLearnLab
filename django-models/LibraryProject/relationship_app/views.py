@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView
 from .models import Book, Library
+from django.views import View
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from .forms import BookForm
@@ -80,31 +82,41 @@ class LibraryDetailView(DetailView):
         context['books'] = library.books.all().select_related('author')
         return context
     
-def register(request):
-    form = UserCreationForm(request.POST)  # get the form from the request object
-    if form.is_valid():
-        user = form.save()      # saving the user ( registering the user data into our database )
-
-        return redirect('relationship_app:login')
-
-
-def login(request):
-    form = AuthenticationForm(request, data=request.POST)  # get the data from the login form
-
-    if form.is_valid(): # check if the form is valid
-        username = form.cleaned_data.get('username')     # get the username and password ( we can get the password or other credential as well)
-        password = form.cleaned_data.get('password')
-        user = authenticate(username=username, password=password)   # authenticate if the given username's password is correct
-
-    if user is not None:   # if the user credentails are valid login the user
+class RegisterView(View):
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, 'relationship_app/register.html', {'form': form})
+    
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
             login(request, user)
-            return redirect('relationship_app:list_books')
+            return redirect('relationship_app:login')
+        return render(request, 'relationship_app/register.html', {'form': form})
 
+class LoginView(View):
+    def get(self, request):
+        form = AuthenticationForm()
+        return redirect('relationship_app:library_list')
+    
+    def post(self, request):
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            
+            if user is not None:
+                login(request, user)
+                return redirect('relationship_app:list_books')
+        
+        return render(request, 'relationship_app/login.html', {'form': form})
 
-def logout(request):
-    logout(request)
-    return render(request, 'logout.html')
-
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return render(request, 'relationship_app/logout.html')
 
 # Utility functions for role checking
 def is_admin(user):
@@ -119,15 +131,15 @@ def is_member(user):
 # Role-based views
 @login_required
 @user_passes_test(is_admin)
-def admin_view(request):
+def Admin(request):
     return render(request, 'relationship_app/admin_view.html')
 
 @login_required
 @user_passes_test(is_librarian)
-def librarian_view(request):
+def Librarian(request):
     return render(request, 'relationship_app/librarian_view.html')
 
 @login_required
 @user_passes_test(is_member)
-def member_view(request):
+def Member(request):
     return render(request, 'relationship_app/member_view.html')
