@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from .forms import BookForm
+from .forms import ExampleForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 # Create your views here.
 @user_passes_test
