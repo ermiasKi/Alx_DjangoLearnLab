@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import action
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .models import Book
 from .serializers import BookSerializer
 from django_filters import rest_framework
