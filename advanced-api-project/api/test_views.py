@@ -92,6 +92,7 @@ class BookAPITestCase(APITestCase):
     # Permissions
     # -----------------
     def test_unauthenticated_user_cannot_create_book(self):
+        self.client.login()
         self.client.logout()
         url = reverse("book-list")
         data = {"title": "Unauthorized Book", "publication_year": 2021, "author": self.author.id}
