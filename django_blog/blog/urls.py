@@ -18,11 +18,11 @@ urlpatterns = [
     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
 
     # comment
-    path('fcomments/', views.CommentListView.as_view(), name='comment-list'),
+    path('comments/', views.CommentListView.as_view(), name='comment-list'),
     path('posts/<int:post_id>/comments/<int:pk>/', views.CommentDetailView.as_view(), name='comment-detail'),
-    path('posts/<int:post_id>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),
-    path('posts/<int:post_id>/comments/<int:pk>/edit/', views.CommentUpdateView.as_view(), name='comment-update'),
-    path('posts/<int:post_id>/comments/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
+    path('posts/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),
+    path('posts/<int:post_id>/comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),
+    path('posts/<int:post_id>/comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
 
     # csrf
     path('get-csrf-token/', views.get_csrf_token, name='get-csrf-token'),
