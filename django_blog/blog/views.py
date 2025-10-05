@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import authenticate, logout, login, get_user_model
@@ -113,6 +114,17 @@ class PostDetailView(DetailView):
     template_name = 'post_detail.html'
     context_object_name = 'post'
     
+    def get_queryset(self):
+        queryset = Post.objects.filter(published=True).order_by('-published_date')
+        
+        # SEARCH functionality
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(content__icontains=search_query) |
+                Q(tags__name__icontains=search_query)
+            ).distinct()
 
 
 class PostCreateView(LoginRequiredMixin,CreateView):
