@@ -15,9 +15,10 @@ class RegisterForm(UserCreationForm):
 
 
 class PostForm(forms.ModelForm):
+    tagw = TagWidget()
     tags = forms.CharField(
         required=False,
-        widget = TagWidget(attrs={'class':'form-tag', 'placeholder':'Enter tags separated by commas' }),
+        widget = tagw(attrs={'class':'form-tag', 'placeholder':'Enter tags separated by commas' }),
         help_text='Separate tags with commas'
     )
 
