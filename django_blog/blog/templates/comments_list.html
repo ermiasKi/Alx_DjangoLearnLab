@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}All Comments - Django Blog{% endblock %}
+
+{% block content %}
+<div class="comments-list-container">
+    <h1>All Comments</h1>
+    
+    <!-- Search and Filter Options -->
+    <div class="comments-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <p>Total comments: {{ comments.count }}</p>
+        </div>
+        <div>
+            <a href="{% url 'post-list' %}" class="btn" style="display: inline-block; width: auto; padding: 8px 16px; margin-left: 10px;">
+                View Posts
+            </a>
+        </div>
+    </div>
+
+    <!-- Comments List -->
+    <div class="comments-grid">
+        {% for comment in comments %}
+        <div class="comment-card" style="background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 4px solid #007bff;">
+            <!-- Comment Header -->
+            <div class="comment-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <div>
+                    <strong style="font-size: 16px; color: #333;">{{ comment.author.username }}</strong>
+                    <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                        Commented on: 
+                        <a href="{% url 'post-detail' comment.post.pk %}" style="color: #007bff; text-decoration: none;">
+                            "{{ comment.post.title }}"
+                        </a>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="color: #666; font-size: 12px;">
+                        {{ comment.created_at|date:"M d, Y" }}
+                    </div>
+                    <div style="color: #999; font-size: 11px;">
+                        {{ comment.created_at|date:"g:i A" }}
+                    </div>
+                    {% if comment.updated_at != comment.created_at %}
+                    <div style="color: #999; font-size: 11px; margin-top: 2px;">
+                        (edited)
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Comment Content -->
+            <div class="comment-content" style="margin-bottom: 15px; line-height: 1.6;">
+                {{ comment.content|linebreaks }}
+            </div>
+
+            <!-- Comment Actions -->
+            <div class="comment-actions" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <a href="{% url 'post-detail' comment.post.pk %}" class="btn" style="display: inline-block; width: auto; padding: 6px 12px; font-size: 14px; margin-right: 10px;">
+                        View Post
+                    </a>
+                </div>
+                
+                {% if user == comment.author or user.is_staff %}
+                <div>
+                    {% if user == comment.author %}
+                    <a href="{% url 'comment-update' comment.pk %}" class="btn" style="display: inline-block; width: auto; padding: 6px 12px; font-size: 14px; margin-right: 10px;">
+                        Edit
+                    </a>
+                    {% endif %}
+                    
+                    {% if user == comment.author or user.is_staff %}
+                    <a href="{% url 'comment-delete' comment.pk %}" class="btn" style="display: inline-block; width: auto; padding: 6px 12px; font-size: 14px; background-color: #dc3545;">
+                        Delete
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% empty %}
+        <div class="no-comments" style="text-align: center; padding: 40px; background: white; border-radius: 8px;">
+            <h3 style="color: #666; margin-bottom: 15px;">No Comments Yet</h3>
+            <p style="color: #999; margin-bottom: 20px;">There are no comments in the system.</p>
+            <a href="{% url 'post-list' %}" class="btn" style="display: inline-block; width: auto; padding: 10px 20px;">
+                Browse Posts to Comment
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="pagination" style="display: flex; justify-content: center; margin-top: 40px;">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn" style="display: inline-block; width: auto; padding: 8px 16px; margin: 0 4px;">
+                First
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn" style="display: inline-block; width: auto; padding: 8px 16px; margin: 0 4px;">
+                Previous
+            </a>
+        {% endif %}
+
+        <span class="current-page" style="padding: 8px 16px; margin: 0 4px; background-color: #333; color: white; border-radius: 4px;">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn" style="display: inline-block; width: auto; padding: 8px 16px; margin: 0 4px;">
+                Next
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn" style="display: inline-block; width: auto; padding: 8px 16px; margin: 0 4px;">
+                Last
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Quick Stats -->
+    <div class="comments-stats" style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+        <h3 style="margin-bottom: 15px;">Comments Overview</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 5px;">
+                <div style="font-size: 24px; font-weight: bold; color: #007bff;">{{ comments.count }}</div>
+                <div style="color: #666;">Total Comments</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 5px;">
+                <div style="font-size: 24px; font-weight: bold; color: #28a745;">{{ unique_authors }}</div>
+                <div style="color: #666;">Unique Authors</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: white; border-radius: 5px;">
+                <div style="font-size: 24px; font-weight: bold; color: #ffc107;">{{ total_posts }}</div>
+                <div style="color: #666;">Posts with Comments</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.comment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.btn {
+    background-color: #333;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.btn:hover {
+    background-color: #555;
+    text-decoration: none;
+    color: white;
+}
+
+.pagination a {
+    background-color: #333;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 0 4px;
+}
+
+.pagination a:hover {
+    background-color: #555;
+    text-decoration: none;
+    color: white;
+}
+</style>
+{% endblock %}

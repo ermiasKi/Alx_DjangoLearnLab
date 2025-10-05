@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - My Site{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 50px 0;">
+    <h1>Welcome to My Site</h1>
+    
+    {% if user.is_authenticated %}
+        <p style="font-size: 18px; margin: 20px 0;">
+            Hello, <strong>{{ user.username }}</strong>! You are logged in.
+        </p>
+        <div style="margin-top: 30px;">
+            <a href="{% url 'profile' %}" class="btn" style="display: inline-block; width: auto; padding: 10px 20px; margin: 0 10px;">
+                View Profile
+            </a>
+            <a href="{% url 'logout' %}" class="btn" style="display: inline-block; width: auto; padding: 10px 20px; margin: 0 10px; background-color: #666;">
+                Logout
+            </a>
+        </div>
+    {% else %}
+        <p style="font-size: 18px; margin: 20px 0;">
+            Please login or register to access all features.
+        </p>
+        <div style="margin-top: 30px;">
+            <a href="{% url 'login' %}" class="btn" style="display: inline-block; width: auto; padding: 10px 20px; margin: 0 10px;">
+                Login
+            </a>
+            <a href="{% url 'register' %}" class="btn" style="display: inline-block; width: auto; padding: 10px 20px; margin: 0 10px; background-color: #666;">
+                Register
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

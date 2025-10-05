@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<article class="post">
+    <h1>{{ post.title }}</h1>
+    <div class="post-meta">
+        By {{ post.author.username }} on {{ post.published_date|date:"F d, Y" }}
+        {% if not post.published %}
+            <span style="color: #dc3545;">(Draft)</span>
+        {% endif %}
+    </div>
+    
+    <div class="post-content">
+        {{ post.content|linebreaks }}
+    </div>
+    
+    <div class="post-actions">
+        <a href="{% url 'post-list' %}" class="btn">Back to Posts</a>
+        {% if user == post.author %}
+            <a href="{% url 'post-update' post.pk %}" class="btn">Edit Post</a>
+            <a href="{% url 'post-delete' post.pk %}" class="btn btn-danger">Delete Post</a>
+        {% endif %}
+    </div>
+</article>
+
+<!-- Comments Section -->
+<section class="comments-section">
+    <h3>Comments ({{ comments.count }})</h3>
+    
+    <!-- Comment Form -->
+    {% if user.is_authenticated %}
+    <div class="comment-form">
+        <h4>Add a Comment</h4>
+        <form method="post" action="{% url 'comment-create' post.pk %}">
+            {% csrf_token %}
+            {{ comment_form.content }}
+            {% if comment_form.content.errors %}
+                <div class="alert alert-error">
+                    {{ comment_form.content.errors }}
+                </div>
+            {% endif %}
+            <button type="submit" class="btn" style="margin-top: 10px;">Post Comment</button>
+        </form>
+    </div>
+    {% else %}
+    <p><a href="{% url 'login' %}">Login</a> to post a comment.</p>
+    {% endif %}
+    
+    <!-- Comments List -->
+    <div class="comments-list">
+        {% for comment in comments %}
+        <div class="comment">
+            <div class="comment-header">
+                <strong>{{ comment.author.username }}</strong>
+                <span class="comment-date">{{ comment.created_at|date:"F d, Y H:i" }}</span>
+                {% if comment.updated_at != comment.created_at %}
+                    <small>(edited)</small>
+                {% endif %}
+            </div>
+            <div class="comment-content">
+                {{ comment.content|linebreaks }}
+            </div>
+            {% if user == comment.author %}
+            <div class="comment-actions">
+                <a href="{% url 'comment-update' comment.pk %}" class="btn btn-small">Edit</a>
+                <a href="{% url 'comment-delete' comment.pk %}" class="btn btn-small btn-danger">Delete</a>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p>No comments yet. Be the first to comment!</p>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+.comments-section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.comment {
+    background: #f8f9fa;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border-left: 4px solid #007bff;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.comment-date {
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+.comment-content {
+    margin-bottom: 10px;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-small {
+    padding: 4px 8px;
+    font-size: 0.8em;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+</style>
+{% endblock %}
