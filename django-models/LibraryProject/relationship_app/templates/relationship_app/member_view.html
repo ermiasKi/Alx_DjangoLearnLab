@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,4 +37,44 @@
         </div>
     </div>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .dashboard { max-width: 800px; margin: 0 auto; }
+        .header { background: #007bff; color: white; padding: 20px; border-radius: 5px; }
+        .content { margin-top: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .nav { margin-top: 20px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>Member Dashboard</h1>
+            <p>Welcome, {{ user.username }} ({{ user.userprofile.role }})</p>
+        </div>
+        
+        <div class="content">
+            <h2>Member Functions</h2>
+            <ul>
+                <li>Browse Available Books</li>
+                <li>Checkout History</li>
+                <li>Reserve Books</li>
+                <li>View Account Information</li>
+                <li>Renew Checked Out Items</li>
+            </ul>
+        </div>
+        
+        <div class="nav">
+            <a href="{% url 'relationship_app:library_list' %}">Browse Libraries</a>
+            <a href="{% url 'relationship_app:logout' %}">Logout</a>
+        </div>
+    </div>
+</body>
+>>>>>>> 9102b10 (blog apps)
 </html>
