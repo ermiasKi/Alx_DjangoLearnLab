@@ -26,4 +26,7 @@ urlpatterns = [
 
     # csrf
     path('get-csrf-token/', views.get_csrf_token, name='get-csrf-token'),
+
+    # tag
+    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view()),
 ]
